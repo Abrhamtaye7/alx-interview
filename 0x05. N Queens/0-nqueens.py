@@ -1,69 +1,104 @@
 #!/usr/bin/python3
-"""
-Solution to the nqueens problem
+"""N Queens
+n queens problem of placing n non-attacking queens on an n×n chessboard
+solution requires that no two queens share the same row, column, or diagonal
 """
 import sys
 
 
-def backtrack(r, n, cols, pos, neg, board):
+def checkNqueensArgs(args):
+    """Check for validity of arguement of Nqueen
     """
-    backtrack function to find solution
-    """
-    if r == n:
-        res = []
-        for l in range(len(board)):
-            for k in range(len(board[l])):
-                if board[l][k] == 1:
-                    res.append([l, k])
-        print(res)
-        return
-
-    for c in range(n):
-        if c in cols or (r + c) in pos or (r - c) in neg:
-            continue
-
-        cols.add(c)
-        pos.add(r + c)
-        neg.add(r - c)
-        board[r][c] = 1
-
-        backtrack(r+1, n, cols, pos, neg, board)
-
-        cols.remove(c)
-        pos.remove(r + c)
-        neg.remove(r - c)
-        board[r][c] = 0
-
-
-def nqueens(n):
-    """
-    Solution to nqueens problem
-    Args:
-        n (int): number of queens. Must be >= 4
-    Return:
-        List of lists representing coordinates of each
-        queen for all possible solutions
-    """
-    cols = set()
-    pos_diag = set()
-    neg_diag = set()
-    board = [[0] * n for i in range(n)]
-
-    backtrack(0, n, cols, pos_diag, neg_diag, board)
-
-
-if __name__ == "__main__":
-    n = sys.argv
-    if len(n) != 2:
+    if len(args) != 2:
         print("Usage: nqueens N")
         sys.exit(1)
     try:
-        nn = int(n[1])
-        if nn < 4:
+        N = int(args[1])
+        if N < 4:
             print("N must be at least 4")
             sys.exit(1)
-        nqueens(nn)
-    except ValueError:
+    except Exception:
         print("N must be a number")
         sys.exit(1)
-        
+
+    return N
+
+
+def display_board(board):
+    """Print board of NxN
+    """
+    for row in board:
+        print(str(row).replace(',', '').replace('\'', ''))
+    print()
+
+
+def nQueens(board):
+    """n queens problem of placing n non-attacking queens on an n×n
+    """
+    res = []
+    for i in range(len(board)):
+        temp = []
+        for j in range(len(board)):
+            if board[i][j] == 'Q':
+                temp.append(i)
+                temp.append(j)
+        res.append(temp)
+    print(res)
+
+
+def isSafe(board, row, col):
+    """Check if two queens threaten each other or not
+    """
+    # return False if two queen share the same column
+    for i in range(row):
+        if board[i][col] == 'Q':
+            return False
+
+    # return false if two queen share vertical diagonal
+    (i, j) = (row, col)
+    while i >= 0 and j >= 0:
+        if board[i][j] == 'Q':
+            return False
+        i -= 1
+        j -= 1
+
+    # return false if two queen share the same '/' diagonal
+    (i, j) = (row, col)
+    while i >= 0 and j < len(board):
+        if board[i][j] == 'Q':
+            return False
+        i -= 1
+        j += 1
+
+    return True
+
+
+def chessBoard(board, row):
+    """Create a ChessBoard of NxN
+    """
+    # if `N` queens are placed successfully, print the solution
+    if row == len(board):
+        nQueens(board)
+        return
+
+    # place queen at every square in the current row `r`
+    # and recur for each valid movement
+    for i in range(len(board)):
+        # if no two queens threaten each other
+        if isSafe(board, row, i):
+            # place queen on the current square
+            board[row][i] = 'Q'
+
+            # recur for the next row
+            chessBoard(board, row + 1)
+
+            #  backtrack and remove the queen from the current square\
+            board[row][i] = '*'
+
+
+if __name__ == "__main__":
+    N = checkNqueensArgs(sys.argv)
+    # Create board
+    board = [["*" for i in range(N)] for j in range(N)]
+    chessBoard(board, 0)
+    
