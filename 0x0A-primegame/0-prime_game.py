@@ -1,22 +1,22 @@
 #!/usr/bin/python3
 """
-Module: Game of choosing Prime numbers
+Define isWineer function, a solution to the Prime Game problem
 """
 
 
-def primeNumbers(n):
+def primes(n):
     """Return list of prime numbers between 1 and n inclusive
        Args:
         n (int): upper boundary of range. lower boundary is always 1
     """
-    primeNos = []
-    filtered = [True] * (n + 1)
-    for prime in range(2, n + 1):
-        if (filtered[prime]):
-            primeNos.append(prime)
-            for i in range(prime, n + 1, prime):
-                filtered[i] = False
-    return primeNos
+    prime = []
+    sieve = [True] * (n + 1)
+    for p in range(2, n + 1):
+        if (sieve[p]):
+            prime.append(p)
+            for i in range(p, n + 1, p):
+                sieve[i] = False
+    return prime
 
 
 def isWinner(x, nums):
@@ -32,8 +32,8 @@ def isWinner(x, nums):
         return None
     Maria = Ben = 0
     for i in range(x):
-        primeNos = primeNumbers(nums[i])
-        if len(primeNos) % 2 == 0:
+        prime = primes(nums[i])
+        if len(prime) % 2 == 0:
             Ben += 1
         else:
             Maria += 1
